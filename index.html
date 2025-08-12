@@ -1,123 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Simulon Links</title>
+  <meta charset="UTF-8" />
+  <title>Simulon Links — Mixed Mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+    :root{
+      --bg: radial-gradient(1200px 800px at 20% -10%, #eef7ff 0%, #f9f9fb 35%, #f7f7ff 70%, #f6f6f8 100%);
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --ring:#dbeafe;
+      --hover:#f0f9ff;
+      --accent:#007acc;
+      --shadow: 0 10px 25px rgba(0,0,0,.06), 0 3px 10px rgba(0,0,0,.05);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color:var(--ink); background:var(--bg); min-height:100vh; display:flex; flex-direction:column;
+    }
+    header{
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      padding:28px 20px; border-bottom:1px solid #e5e7eb; background:rgba(255,255,255,.6); backdrop-filter: blur(8px);
+    }
+    header .brand{
+      display:flex; align-items:center; gap:12px;
+      padding:10px 14px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff8;
+    }
+    header img{ max-height:72px; display:block }
+    h1{ margin:0; font-size: clamp(20px, 2.6vw, 28px); letter-spacing:.3px }
+    main{ width:min(880px, 92vw); margin:26px auto; flex:1; }
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; margin:0 0 18px 0;
+    }
+    .search{
+      flex:1 1 260px; display:flex; align-items:center; gap:10px; background:#fff; border:1px solid #e5e7eb;
+      padding:10px 12px; border-radius:12px; box-shadow: var(--shadow);
+    }
+    .search input{ border:0; outline:0; width:100%; font-size:15px; color:var(--ink); background:transparent }
+    .btn{
+      appearance:none; border:1px solid #cbd5e1; background:#fff; color:var(--ink);
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; box-shadow: var(--shadow);
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ background:#f8fafc; border-color:#94a3b8; transform: translateY(-1px) }
+    ul.links{
+      list-style:none; padding:0; margin:0; display:block;
+    }
+    .item{
+      background:var(--card); border:1px solid #e5e7eb; border-left:6px solid var(--accent);
+      border-radius: var(--radius); padding:14px 16px; margin:12px 0; box-shadow: var(--shadow);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .item:hover{ background:var(--hover); transform: translateY(-1px) }
+    .meta{ display:flex; align-items:center; gap:12px; min-width:0 }
+    .dot{ width:10px; height:10px; border-radius:999px; background:var(--accent); box-shadow:0 0 0 3px var(--ring) }
+    .title{ font-size:18px; font-weight:800; letter-spacing:.2px; text-transform:none; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .url{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48vw }
+    .go{
+      text-decoration:none; font-weight:800; padding:9px 12px; border-radius:10px; border:1px solid #cbd5e1;
+      background:#fff; transition: all .15s ease; white-space:nowrap;
+    }
+    .go:hover{ background:#000; color:#fff; border-color:#000 }
+    footer{
+      padding:18px 14px 28px; text-align:center; background:#fff; border-top:1px solid #e5e7eb; color:#334155; line-height:1.5;
     }
 
-    header {
-      background-color: #fff;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 2px solid #ccc;
-    }
+    /* Title color classes (keep these exact mappings) */
+    .alien .title{ color:#39ff14 }          /* Alien green */
+    .kruger-pe8l .title{ color:#ff66cc }    /* Rose */
+    .krugernp .title{ color:#ff6699 }       /* Deeper rose */
+    .light .title{ color:#ffd700 }
+    .gravity .title{ color:#1e90ff }
+    .tumbling .title{ color:#ff8c00 }
+    .dsn .title{ color:#8a2be2 }
+    .v1 .title{ color:#2f4f4f }
+    .ui .title{ color:#ff1493 }
+    .obt .title{ color:#008b8b }
+    .invaders .title{ color:#ff0000 }
+    .planet .title{ color:#006400 }
+    .celestial .title{ color:#4682b4 }
+    .lang .title{ color:#111111 }
+    .pareto .title{ color:#9932cc }
+    .bond .title{ color:#708090 }
+    .simulon .title{ color:#b22222 }
+    .flock .title{ color:#32cd32 }
+    .carto .title{ color:#20b2aa }
+    .scroller .title{ color:#ff4500 }
 
-    header img {
-      max-height: 80px;
-    }
+    /* Left border accent per type (optional flair; matches above roughly) */
+    .alien{ --accent:#39ff14 } .kruger-pe8l{ --accent:#ff66cc } .krugernp{ --accent:#ff6699 }
+    .light{ --accent:#ffd700 } .gravity{ --accent:#1e90ff } .tumbling{ --accent:#ff8c00 }
+    .dsn{ --accent:#8a2be2 } .v1{ --accent:#2f4f4f } .ui{ --accent:#ff1493 } .obt{ --accent:#008b8b }
+    .invaders{ --accent:#ff0000 } .planet{ --accent:#006400 } .celestial{ --accent:#4682b4 }
+    .lang{ --accent:#111111 } .pareto{ --accent:#9932cc } .bond{ --accent:#708090 }
+    .simulon{ --accent:#b22222 } .flock{ --accent:#32cd32 } .carto{ --accent:#20b2aa } .scroller{ --accent:#ff4500 }
 
-    main {
-      flex: 1;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #333;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    ul li {
-      margin: 10px 0;
-      background: white;
-      border-radius: 8px;
-      padding: 12px 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      transition: background 0.3s ease;
-    }
-
-    ul li:hover {
-      background: #e9f2ff;
-    }
-
-    ul li a {
-      text-decoration: none;
-      color: #007acc;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-
-    footer {
-      background-color: #fff;
-      border-top: 2px solid #ccc;
-      padding: 15px;
-      font-size: 0.9em;
-      line-height: 1.4;
-      text-align: center;
-      color: #555;
+    /* Small screens: keep single-column, roomy touch targets */
+    @media (max-width:560px){
+      .item{ padding:16px 14px }
+      .title{ font-size:17px }
+      .go{ padding:9px 12px }
+      .url{ display:none }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <!-- Logo placeholder -->
-  <img src="static/images/logo.png" alt="Simulon Logo">
-</header>
+  <header>
+    <div class="brand">
+      <!-- Drop your logo to static/images/logo.png -->
+      <img src="static/images/logo.png" alt="Simulon Logo Placeholder" />
+      <h1>Simulon & Partner Links</h1>
+    </div>
+  </header>
 
-<main>
-  <h1>Simulon and Partner Links</h1>
-  <ul>
-    <li><a href="https://simulon-light.onrender.com" target="_blank">light</a></li>
-    <li><a href="https://simulon-gravity.onrender.com" target="_blank">gravity</a></li>
-    <li><a href="https://simulon-tumbling.onrender.com" target="_blank">tumbling</a></li>
-    <li><a href="https://simulon-dsn.onrender.com" target="_blank">dsn</a></li>
-    <li><a href="https://simulon-alien.onrender.com" target="_blank">alien</a></li>
-    <li><a href="https://simulon-v1.onrender.com" target="_blank">v1</a></li>
-    <li><a href="https://simulon-ui.onrender.com" target="_blank">ui</a></li>
-    <li><a href="https://simulon-obt.onrender.com" target="_blank">obt</a></li>
-    <li><a href="https://simulon-invaders.onrender.com" target="_blank">invaders</a></li>
-    <li><a href="https://simulon-planet.onrender.com" target="_blank">planet</a></li>
-    <li><a href="https://simulon-celestial.onrender.com" target="_blank">celestial</a></li>
-    <li><a href="https://simulon-lang.onrender.com" target="_blank">lang</a></li>
-    <li><a href="https://simulon-pareto.onrender.com" target="_blank">pareto</a></li>
-    <li><a href="https://simulon-bond.onrender.com" target="_blank">bond</a></li>
-    <li><a href="https://kruger-pe8l.onrender.com" target="_blank">kruger-pe8l</a></li>
-    <li><a href="https://krugernp.onrender.com" target="_blank">krugernp</a></li>
-    <li><a href="https://simulon.onrender.com" target="_blank">simulon</a></li>
-    <li><a href="https://simulon-flock.onrender.com" target="_blank">flock</a></li>
-    <li><a href="https://simulon-carto.onrender.com" target="_blank">carto</a></li>
-    <li><a href="https://simulon-scroller.onrender.com" target="_blank">scroller</a></li>
-  </ul>
-</main>
+  <main>
+    <div class="toolbar">
+      <div class="search" title="Type to filter by title or URL">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="search" placeholder="Search links..." />
+      </div>
+      <button class="btn" id="shuffleBtn" title="Shuffle the list">Shuffle</button>
+      <button class="btn" id="sortBtn" title="Sort A–Z by title">Sort A–Z</button>
+      <button class="btn" id="resetBtn" title="Reset to original order">Reset</button>
+    </div>
 
-<footer>
-  &copy; Hrishi Mukherjee Horizons 2025.<br>
-  "Simulon" and all "Simulon" entities are a venture of Hrishi Mukherjee Horizons 2025.<br>
-  OBT "Optimal Balance Theory" is protected copyright Oliver Boeschenstein.<br>
-  "Infosophic Fields" and "Infosophy" are proprietary Gösta Greimel.<br>
-  "Simulon", "OBT", and "Infosophy" are a joint triad-venture between Canada, Switzerland, and Austria.<br>
-  All "Simulon" services are powered by OpenAI. All "Simulon" services are hosted on Render.com.
-</footer>
+    <ul class="links" id="links"></ul>
+  </main>
 
+  <footer>
+    &copy; Hrishi Mukherjee Horizons 2025.<br>
+    "Simulon" and all "Simulon" entities are a venture of Hrishi Mukherjee Horizons 2025.<br>
+    OBT "Optimal Balance Theory" is protected copyright Oliver Boeschenstein.<br>
+    "Infosophic Fields" and "Infosophy" are proprietary Gösta Greimel.<br>
+    "Simulon", "OBT", and "Infosophy" are a joint triad-venture between Canada, Switzerland, and Austria.<br>
+    All "Simulon" services are powered by OpenAI. All "Simulon" services are hosted on Render.com.
+  </footer>
+
+  <script>
+    const DATA = [
+      {cls:'light',       title:'light',        href:'https://simulon-light.onrender.com'},
+      {cls:'gravity',     title:'gravity',      href:'https://simulon-gravity.onrender.com'},
+      {cls:'tumbling',    title:'tumbling',     href:'https://simulon-tumbling.onrender.com'},
+      {cls:'dsn',         title:'dsn',          href:'https://simulon-dsn.onrender.com'},
+      {cls:'alien',       title:'alien',        href:'https://simulon-alien.onrender.com'},
+      {cls:'v1',          title:'v1',           href:'https://simulon-v1.onrender.com'},
+      {cls:'ui',          title:'ui',           href:'https://simulon-ui.onrender.com'},
+      {cls:'obt',         title:'obt',          href:'https://simulon-obt.onrender.com'},
+      {cls:'invaders',    title:'invaders',     href:'https://simulon-invaders.onrender.com'},
+      {cls:'planet',      title:'planet',       href:'https://simulon-planet.onrender.com'},
+      {cls:'celestial',   title:'celestial',    href:'https://simulon-celestial.onrender.com'},
+      {cls:'lang',        title:'lang',         href:'https://simulon-lang.onrender.com'},
+      {cls:'pareto',      title:'pareto',       href:'https://simulon-pareto.onrender.com'},
+      {cls:'bond',        title:'bond',         href:'https://simulon-bond.onrender.com'},
+      {cls:'kruger-pe8l', title:'kruger-pe8l',  href:'https://kruger-pe8l.onrender.com'},
+      {cls:'krugernp',    title:'krugernp',     href:'https://krugernp.onrender.com'},
+      {cls:'simulon',     title:'simulon',      href:'https://simulon.onrender.com'},
+      {cls:'flock',       title:'flock',        href:'https://simulon-flock.onrender.com'},
+      {cls:'carto',       title:'carto',        href:'https://simulon-carto.onrender.com'},
+      {cls:'scroller',    title:'scroller',     href:'https://simulon-scroller.onrender.com'}
+    ];
+
+    const original = [...DATA];
+    let current = [...DATA];
+
+    const list = document.getElementById('links');
+    const q = document.getElementById('q');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const sortBtn = document.getElementById('sortBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function el(tag, attrs={}, ...children){
+      const node = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v]) => {
+        if(k === 'class') node.className = v;
+        else if(k === 'href') node.setAttribute('href', v);
+        else if(k === 'target') node.setAttribute('target', v);
+        else if(k === 'title') node.title = v;
+        else node[k] = v;
+      });
+      children.forEach(c => node.append(c));
+      return node;
+    }
+
+    function render(listData){
+      list.innerHTML = '';
+      listData.forEach(item => {
+        const li = el('li', {class:`item ${item.cls}`});
+        const meta = el('div', {class:'meta'});
+        meta.append(el('span', {class:'dot'}));
+        const textWrap = el('div');
+        textWrap.append(el('p', {class:'title'}, item.title));
+        textWrap.append(el('div', {class:'url'}, item.href.replace(/^https?:\/\//,'') ));
+        meta.append(textWrap);
+        const a = el('a', {class:'go', href:item.href, target:'_blank', title:`Open ${item.title}`}, 'Open');
+        li.append(meta, a);
+        list.append(li);
+      });
+    }
+
+    function shuffle(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function filter(term){
+      const t = term.trim().toLowerCase();
+      if(!t) return current;
+      return current.filter(x => x.title.toLowerCase().includes(t) || x.href.toLowerCase().includes(t));
+    }
+
+    // Initial: auto-mix once (you can disable by using 'current = [...original];')
+    current = shuffle(original);
+    render(current);
+
+    // Interactions
+    shuffleBtn.addEventListener('click', () => { current = shuffle(current); render(filter(q.value)); });
+    sortBtn.addEventListener('click', () => {
+      current = [...current].sort((a,b) => a.title.localeCompare(b.title));
+      render(filter(q.value));
+    });
+    resetBtn.addEventListener('click', () => { current = [...original]; q.value=''; render(current); });
+
+    // Search (debounced)
+    let tId;
+    q.addEventListener('input', () => {
+      clearTimeout(tId);
+      tId = setTimeout(() => render(filter(q.value)), 120);
+    });
+  </script>
 </body>
 </html>
