@@ -69,10 +69,11 @@
       padding:18px 14px 28px; text-align:center; background:#fff; border-top:1px solid #e5e7eb; color:#334155; line-height:1.5;
     }
 
-    /* Title color classes (keep these exact mappings) */
-    .alien .title{ color:#39ff14 }          /* Alien green */
-    .kruger-pe8l .title{ color:#ff66cc }    /* Rose */
-    .krugernp .title{ color:#ff6699 }       /* Deeper rose */
+    /* Title color classes */
+    .alien .title{ color:#39ff14 }
+    .kruger-pe8l .title{ color:#ff66cc }
+    .krugernp .title{ color:#ff6699 }
+    .oo .title{ color:#4b0082 } /* Indigo, for OO */
     .light .title{ color:#ffd700 }
     .gravity .title{ color:#1e90ff }
     .tumbling .title{ color:#ff8c00 }
@@ -91,15 +92,15 @@
     .carto .title{ color:#20b2aa }
     .scroller .title{ color:#ff4500 }
 
-    /* Left border accent per type (optional flair; matches above roughly) */
-    .alien{ --accent:#39ff14 } .kruger-pe8l{ --accent:#ff66cc } .krugernp{ --accent:#ff6699 }
+    /* Border accent variables per class */
+    .alien{ --accent:#39ff14 } .kruger-pe8l{ --accent:#ff66cc }
+    .krugernp{ --accent:#ff6699 } .oo{ --accent:#4b0082 }
     .light{ --accent:#ffd700 } .gravity{ --accent:#1e90ff } .tumbling{ --accent:#ff8c00 }
     .dsn{ --accent:#8a2be2 } .v1{ --accent:#2f4f4f } .ui{ --accent:#ff1493 } .obt{ --accent:#008b8b }
     .invaders{ --accent:#ff0000 } .planet{ --accent:#006400 } .celestial{ --accent:#4682b4 }
     .lang{ --accent:#111111 } .pareto{ --accent:#9932cc } .bond{ --accent:#708090 }
     .simulon{ --accent:#b22222 } .flock{ --accent:#32cd32 } .carto{ --accent:#20b2aa } .scroller{ --accent:#ff4500 }
 
-    /* Small screens: keep single-column, roomy touch targets */
     @media (max-width:560px){
       .item{ padding:16px 14px }
       .title{ font-size:17px }
@@ -112,7 +113,6 @@
 
   <header>
     <div class="brand">
-      <!-- Drop your logo to static/images/logo.png -->
       <img src="static/images/logo.png" alt="Simulon Logo Placeholder" />
       <h1>Simulon & Partner Links</h1>
     </div>
@@ -161,6 +161,7 @@
       {cls:'bond',        title:'bond',         href:'https://simulon-bond.onrender.com'},
       {cls:'kruger-pe8l', title:'kruger-pe8l',  href:'https://kruger-pe8l.onrender.com'},
       {cls:'krugernp',    title:'krugernp',     href:'https://krugernp.onrender.com'},
+      {cls:'oo',          title:'oo',           href:'https://simulon-oo.onrender.com'},
       {cls:'simulon',     title:'simulon',      href:'https://simulon.onrender.com'},
       {cls:'flock',       title:'flock',        href:'https://simulon-flock.onrender.com'},
       {cls:'carto',       title:'carto',        href:'https://simulon-carto.onrender.com'},
@@ -179,10 +180,10 @@
     function el(tag, attrs={}, ...children){
       const node = document.createElement(tag);
       Object.entries(attrs).forEach(([k,v]) => {
-        if(k === 'class') node.className = v;
-        else if(k === 'href') node.setAttribute('href', v);
-        else if(k === 'target') node.setAttribute('target', v);
-        else if(k === 'title') node.title = v;
+        if(k==='class') node.className = v;
+        else if(k==='href') node.setAttribute('href', v);
+        else if(k==='target') node.setAttribute('target', v);
+        else if(k==='title') node.title = v;
         else node[k] = v;
       });
       children.forEach(c => node.append(c));
@@ -197,7 +198,7 @@
         meta.append(el('span', {class:'dot'}));
         const textWrap = el('div');
         textWrap.append(el('p', {class:'title'}, item.title));
-        textWrap.append(el('div', {class:'url'}, item.href.replace(/^https?:\/\//,'') ));
+        textWrap.append(el('div', {class:'url'}, item.href.replace(/^https?:\/\//,'')));
         meta.append(textWrap);
         const a = el('a', {class:'go', href:item.href, target:'_blank', title:`Open ${item.title}`}, 'Open');
         li.append(meta, a);
@@ -206,33 +207,26 @@
     }
 
     function shuffle(arr){
-      const a = [...arr];
+      const a=[...arr];
       for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i], a[j]] = [a[j], a[i]];
+        const j=Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
       }
       return a;
     }
 
     function filter(term){
-      const t = term.trim().toLowerCase();
-      if(!t) return current;
-      return current.filter(x => x.title.toLowerCase().includes(t) || x.href.toLowerCase().includes(t));
+      const t=term.trim().toLowerCase();
+      return t ? current.filter(x => x.title.includes(t) || x.href.includes(t)) : current;
     }
 
-    // Initial: auto-mix once (you can disable by using 'current = [...original];')
     current = shuffle(original);
     render(current);
 
-    // Interactions
     shuffleBtn.addEventListener('click', () => { current = shuffle(current); render(filter(q.value)); });
-    sortBtn.addEventListener('click', () => {
-      current = [...current].sort((a,b) => a.title.localeCompare(b.title));
-      render(filter(q.value));
-    });
+    sortBtn.addEventListener('click', () => { current = [...current].sort((a,b)=>a.title.localeCompare(b.title)); render(filter(q.value)); });
     resetBtn.addEventListener('click', () => { current = [...original]; q.value=''; render(current); });
 
-    // Search (debounced)
     let tId;
     q.addEventListener('input', () => {
       clearTimeout(tId);
